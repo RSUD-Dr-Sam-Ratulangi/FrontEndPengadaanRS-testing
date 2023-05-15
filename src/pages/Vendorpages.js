@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../assets/vendorpages.css';
 import { Container } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Vendorreqtable from './Vendorreqtable'; // Import Vendorreqtable
+import Vendorreqtable from './Vendorreqtable';
 
 const Vendorpages = () => {
   const [formValues, setFormValues] = useState({
@@ -123,30 +122,30 @@ const Vendorpages = () => {
               />
           </div>
 
-<div className="form-group">
-  <label htmlFor="status">Status:</label>
-  <select
-    id="status"
-    name="status"
-    value={formValues.status}
-    onChange={handleChange}
-    required
-    className="form-control"
-  >
-    <option value="">Select Status</option>
-    <option value="OPEN">OPEN</option>
-    <option value="CLOSED">CLOSED</option>
-    <option value="FULFILLED">FULFILLED</option>
-  </select>
-</div>
+          <div className="form-group">
+            <label htmlFor="status">Status:</label>
+            <select
+              id="status"
+              name="status"
+              value={formValues.status}
+              onChange={handleChange}
+              required
+              className="form-control"
+            >
+              <option value="">Select Status</option>
+              <option value="OPEN">OPEN</option>
+              <option value="CLOSED">CLOSED</option>
+              <option value="FULFILLED">FULFILLED</option>
+            </select>
+          </div>
 
-<button type="submit" className="btn btn-primary">
-  Create Product Request
-</button>
-</form>
-</div>
-</div>
-</Container>
+          <button type="submit" className="btn btn-primary">
+            Create Product Request
+          </button>
+        </form>
+      </div>
+    </div>
+  </Container>
 );
 
 };

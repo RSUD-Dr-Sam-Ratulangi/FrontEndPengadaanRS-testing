@@ -1,30 +1,85 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, Badge } from "react-bootstrap";
-import '../assets/productpages.css';
-
+import "../assets/productpages.css";
 
 const Productpages = () => {
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  // const [selectedProduct, setSelectedProduct] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
+  const quantity = 1;
 
   useEffect(() => {
     axios
-      .get(`http://rsudsamrat.site:8080/pengadaan/dev/v1/products/${currentPage}/10`)
+      .get(`http://rsudsamrat.site:8080/pengadaan/dev/v1/products/${page}/5`)
       .then((response) => {
-        const productsWithVendor = response.data.content.filter(product => product.vendor !== null);
+        const productsWithVendor = response.data.content.filter(
+          (product) => product.vendor !== null
+        );
         setProducts(productsWithVendor);
         setTotalPages(response.data.totalPages);
         console.log(productsWithVendor);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-  }, [currentPage]);  
-  
+  }, [page]); /* Rendering current page */
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const orderProduct = (produk) => {
+    // setSelectedProduct(produk.id);
+    console.log(produk.name);
+    // eslint-disable-next-line no-restricted-globals
+    if (
+      // eslint-disable-next-line no-restricted-globals
+      confirm(
+        `Apakah Anda yakin ingin melakukan pemesanan produk ${produk.name}`
+      )
+    ) {
+      axios
+        .post("http://rsudsamrat.site:8080/pengadaan/dev/v1/orders", {})
+        .then((response) => {
+          console.log(response.data);
+          const orderId = response.data.id;
+          const orderItem = [{ productId: produk.id, quantity: quantity }];
+          console.log(orderItem);
+          axios
+            .post(
+              `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${orderId}/items`,
+              orderItem
+            )
+            .then((response) => {
+              console.log(response.data);
+              alert("Add Item Success");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      // pengguna membatalkan operasi
+      console.log("Pemesanan dibatalkan.");
+    }
+  };
+
+  const prevPage = () => {
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  };
+
+  const nextPage = () => {
+    if (page < totalPages - 1) {
+      setPage(page + 1);
+    }
   };
 
   const filteredProducts = products.filter((product) => {
@@ -38,19 +93,6 @@ const Productpages = () => {
       (product.vendor && product.vendor.name.toLowerCase().includes(search)) // Pencarian berdasarkan nama vendor
     );
   });
-  
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
 
   return (
     <div className="container mt-5">
@@ -69,7 +111,7 @@ const Productpages = () => {
           <div className="col mb-4" key={product.id}>
             <Card className="h-100">
               {/* <Card.Img variant="top" src={product.imageUrl} /> */}
-              <Card.Img variant="top" src={product.imageUrl || "https://via.placeholder.com/150"} />
+              <Card.Img variant="top" />
               <Card.Body>
                 <p>{product.vendor.name}</p> {/* Menampilkan nama vendor */}
                 <Card.Title>{product.name}</Card.Title>
@@ -81,7 +123,12 @@ const Productpages = () => {
                   <Badge bg="secondary" className="p-2">
                     {`Quantity: ${product.quantity}`}
                   </Badge>
-                  <button className="btn btn-primary">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      orderProduct(product);
+                    }}
+                  >
                     Order
                   </button>
                 </div>
@@ -91,21 +138,13 @@ const Productpages = () => {
         ))}
       </div>
       <div className="d-flex justify-content-between align-items-center">
-        <button
-          className="btn btn-primary"
-          onClick={handlePrevPage}
-          disabled={currentPage === 0}
-        >
+        <button className="btn btn-primary" onClick={prevPage}>
           Previous Page
         </button>
         <p>
-          Page {currentPage + 1} of {totalPages}
+          Page {page + 1} of {totalPages}
         </p>
-        <button
-          className="btn btn-primary"
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages - 1}
-        >
+        <button className="btn btn-primary" onClick={nextPage}>
           Next Page
         </button>
       </div>

@@ -5,9 +5,10 @@ import Dashboard from '../pages/Dashboard';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Productdetails from '../pages/Productdetails';
 import Vendorpages from '../pages/Vendorpages';
 import Vendorreqtable from '../pages/Vendorreqtable';
+import Orderpages from '../pages/Orderpages';
+
 
 const Routers = () => {
   return (
@@ -16,9 +17,9 @@ const Routers = () => {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/products" element={<Productpages />} />
-        <Route path="/productdetails/:id" element={<Productdetails />} />
         <Route path="/vendor" element={<Vendorpages />} /> {/* Update the route path to "/vendor" */}
         <Route path="/vendorlist" element={<Vendorreqtable />} />
+        <Route path="/orders" element={<Orderpages />} />
       </Routes>
       <Footer />
     </Router>

@@ -44,16 +44,16 @@ const Navigation = () => {
         </li>
       </ul>
       <div className="navigation-icons">
-        <span className="notification-icon" onClick={handleNotificationClick}>
+        <Link to="/notifications" className="notification-icon" onClick={handleNotificationClick}>
           <FontAwesomeIcon icon={faBell} />
           {notificationCount > 0 && <span className="notification-count">{notificationCount}</span>}
-        </span>
-        <span className="profile-icon" onClick={handleProfileClick}>
+        </Link>
+        <Link to="/profile" className="profile-icon" onClick={handleProfileClick}>
           <FontAwesomeIcon icon={faUser} />
-        </span>
-        <span className="logout-icon" onClick={handleLogoutClick}>
+        </Link>
+        <Link to="/logout" className="logout-icon" onClick={handleLogoutClick}>
           <FontAwesomeIcon icon={faSignOutAlt} />
-        </span>
+        </Link>
       </div>
     </nav>
   );
