@@ -8,7 +8,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Vendorpages from '../pages/Vendorpages';
 import Vendorreqtable from '../pages/Vendorreqtable';
 import Orderpages from '../pages/Orderpages';
-
+import Notificationpages from '../pages/Notificationpages';
+import Profilpages from '../pages/Profilpages';
+import SignInpages from '../pages/SignInpages';
 
 const Routers = () => {
   return (
@@ -20,6 +22,9 @@ const Routers = () => {
         <Route path="/vendor" element={<Vendorpages />} /> {/* Update the route path to "/vendor" */}
         <Route path="/vendorlist" element={<Vendorreqtable />} />
         <Route path="/orders" element={<Orderpages />} />
+        <Route path="/notifications" element={<Notificationpages />} />
+        <Route path="/profile" element={<Profilpages />} />
+        <Route path="/logout" element={<SignInpages />} />
       </Routes>
       <Footer />
     </Router>

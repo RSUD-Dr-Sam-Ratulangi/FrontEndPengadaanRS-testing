@@ -1,5 +1,6 @@
 import React from "react";
 import { ListGroup } from "react-bootstrap";
+// import "../assets/orderpages.css";
 
 const Orderpages = () => {
   const orders = [
@@ -95,13 +96,12 @@ const Orderpages = () => {
                         <p>Quantity: {item.quantity}</p>
                       </div>
                       <div>
-                        <img src={`http://rsudsamrat.site:8080/images/${item.id}`} alt={item.name} className="product-image" /> {/* Menampilkan gambar dari API */}
-                        <button
-                          className="btn btn-danger mr-2"
-                          onClick={() => handlePurchase(item.orderId, item.id)}
-                        >
-                          Remove
-                        </button>
+                        <img
+                          src={`http://rsudsamrat.site:8080/images/${item.id}`}
+                          alt={item.name}
+                          className="product-image"
+                        />
+                        {/* Menampilkan gambar dari API */}
                         <button
                           className="btn btn-secondary mr-2"
                           onClick={() => handleDecreaseQuantity(item.orderId, item.id)}
