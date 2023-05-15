@@ -1,148 +1,300 @@
-import React from "react";
-import { ListGroup } from "react-bootstrap";
-// import "../assets/orderpages.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Orderpages = () => {
-  const orders = [
-    {
-      id: 1,
-      items: [
-        {
-          id: 1,
-          name: "Product 1",
-          vendor: "Vendor 1",
-          orderId: 1,
-          quantity: 1,
-          price: 10.0
-        },
-        {
-          id: 2,
-          name: "Product 2",
-          vendor: "Vendor 2",
-          orderId: 1,
-          quantity: 1,
-          price: 15.0
-        }
-      ]
-    },
-    {
-      id: 2,
-      items: [
-        {
-          id: 3,
-          name: "Product 3",
-          vendor: "Vendor 3",
-          orderId: 2,
-          quantity: 1,
-          price: 20.0
-        },
-        {
-          id: 4,
-          name: "Product 4",
-          vendor: "Vendor 4",
-          orderId: 2,
-          quantity: 1,
-          price: 25.0
-        }
-      ]
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [sort, setSort] = useState("orderDate");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showProductDetailModal, setShowProductDetailModal] = useState(false);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/orders/items/product-stock?page=${page}&sort=${sort}`
+        );
+        setData(response.data.content);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [page, sort]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handleSortChange = (event) => {
+    setSort(event.target.value);
+  };
+
+  const openModal = async (orderId) => {
+    try {
+      const response = await axios.get(
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${orderId}`
+      );
+      setSelectedOrder(response.data);
+    } catch (error) {
+      console.error(error);
     }
-  ];
-
-  const handlePurchase = (orderId, itemId) => {
-    console.log("Order ID:", orderId);
-    console.log("Item ID:", itemId);
   };
 
-  const handleIncreaseQuantity = (orderId, itemId) => {
-    console.log("Increase Quantity - Order ID:", orderId);
-    console.log("Increase Quantity - Item ID:", itemId);
+  const closeModal = () => {
+    setSelectedOrder(null);
   };
 
-  const handleDecreaseQuantity = (orderId, itemId) => {
-    console.log("Decrease Quantity - Order ID:", orderId);
-    console.log("Decrease Quantity - Item ID:", itemId);
+  const handleQuantityChange = (orderItemId, newQuantity) => {
+    // Implement the logic to update the quantity of the order item
+    // based on the provided `orderItemId` and `newQuantity`.
+    // You can update the state or make an API call to update the backend.
   };
 
-  const handleCheckout = () => {
-    console.log("Checkout");
+  const handleDeleteOrderItem = (orderItemId) => {
+    // Implement the logic to delete the order item
+    // based on the provided `orderItemId`.
+    // You can update the state or make an API call to delete the order item from the backend.
   };
 
-  const calculateTotalPrice = () => {
-    let totalPrice = 0;
-    orders.forEach((order) => {
-      order.items.forEach((item) => {
-        totalPrice += item.price * item.quantity;
-      });
-    });
-    return totalPrice.toFixed(2);
+  const handleAddProduct = () => {
+    // Implement logic to add a new product to the order
   };
 
-  return (
-    <div className="container mt-5">
-      <h1>Order List</h1>
-      <div className="order-list">
-        {orders.map((order) => (
-          <div className="order-item" key={order.id}>
-            <h3>Order ID: {order.id}</h3>
-            <div className="order-items">
-              <ListGroup>
-                {order.items.map((item) => (
-                  <ListGroup.Item key={item.id}>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div>
-                        <h4>{item.name}</h4>
-                        <p>Vendor: {item.vendor}</p>
-                        <p>Order ID: {item.orderId}</p>
-                        <p>Quantity: {item.quantity}</p>
-                      </div>
-                      <div>
-                        <img
-                          src={`http://rsudsamrat.site:8080/images/${item.id}`}
-                          alt={item.name}
-                          className="product-image"
-                        />
-                        {/* Menampilkan gambar dari API */}
-                        <button
-                          className="btn btn-secondary mr-2"
-                          onClick={() => handleDecreaseQuantity(item.orderId, item.id)}
-                        >
-                          -
-                        </button>
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => handleIncreaseQuantity(item.orderId, item.id)}
-                        >
-                          +
-                        </button>
-                        <button
-                          className="btn btn-success ml-2"
-                          onClick={() => handlePurchase(item.orderId, item.id)}
-                        >
-                          Beli Sekarang
-                          </button>
-                        </div>
-                        <input
-                          type="checkbox"
-                          className="checkbox-style ml-2"
-                          // Add any logic or event handling for the checkbox here
-                        />
-                      </div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="checkout-section">
-          <h3>Total Price: ${calculateTotalPrice()}</h3>
-          <button className="btn btn-primary" onClick={handleCheckout}>
-            Checkout
-          </button>
-        </div>
-      </div>
-    );
+  const handleDetailProduct = async (productUuid) => {
+    try {
+      const response = await axios.get(
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/products/${productUuid}`
+      );
+      setSelectedProduct(response.data);
+      setShowProductDetailModal(true);
+    } catch (error) {
+      console.error(error);
+    }
   };
   
-  export default Orderpages;
+  
 
+
+  return (
+    <div className="container">
+      <h2>Order Table</h2>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <div className="mb-3">
+            <label htmlFor="sort">Sort By:</label>
+            <select
+              id="sort"
+              className="form-control"
+              value={sort}
+              onChange={handleSortChange}
+            >
+              <option value="orderDate">Order Date</option>
+              <option value="orderId">Order ID</option>
+              {/* Add other sorting options if available */}
+            </select>
+          </div>
+          <table className="table">
+            <thead className="thead-dark">
+              <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Operations</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item.orderItemId}>
+                  <td>{item.orderId}</td>
+                  <td>{item.orderDate}</td>
+                  <td>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => openModal(item.orderId)}
+                    >
+                      Nota
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+            {selectedOrder && (
+              <div className="modal" style={{ display: "block" }}>
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h3 className="modal-title">Order Details</h3>
+                      <button
+                        type="button"
+                        className="close"
+                        onClick={closeModal}
+                      >
+                        <span>&times;</span>
+                      </button>
+                    </div>
+                    <div className="modal-body">
+                      <h4>Order Items:</h4>
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Product UUID</th>
+                            <th>Product Name</th>
+                            <th>Product Price</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedOrder.orderItems.map((orderItem) => (
+                            <tr key={orderItem.id}>
+                              <td>{orderItem.product.productuuid}</td>
+                              <td>{orderItem.product.name}</td>
+                              <td>{orderItem.product.price}</td>
+                              <td>
+                                <button
+                                  className="btn btn-sm btn-secondary"
+                                  onClick={() =>
+                                    handleQuantityChange(
+                                      orderItem.id,
+                                      orderItem.quantity - 1
+                                    )
+                                  }
+                                >
+                                  -
+                                </button>
+                                {orderItem.quantity}
+                                <button
+                                  className="btn btn-sm btn-secondary"
+                                  onClick={() =>
+                                    handleQuantityChange(
+                                      orderItem.id,
+                                      orderItem.quantity + 1
+                                    )
+                                  }
+                                >
+                                  +
+                                </button>
+                              </td>
+                              <td>
+                                <button
+                                  className="btn btn-sm btn-danger"
+                                  onClick={() =>
+                                    handleDeleteOrderItem(orderItem.id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                                <button
+  className="btn btn-sm btn-primary"
+  onClick={() => handleDetailProduct(orderItem.product.productuuid)}
+>
+  Detail
+</button>
+
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div>
+                      <button className="btn btn-primary" onClick={handleAddProduct}>
+                        Add Product
+                      </button>
+                      </div>
+
+                      <h4>Payment Details:</h4>
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Payment ID</th>
+                            <th>Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{selectedOrder.payment.id}</td>
+                            <td>{selectedOrder.payment.amount}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" className="btn btn-primary">
+                        Payout Detail
+                      </button>
+                      <button type="button" className="btn btn-primary">
+                        Check Status
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+{showProductDetailModal && selectedProduct && (
+  <div className="modal" style={{ display: "block" }}>
+    <div className="modal-dialog modal-dialog-centered">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h3 className="modal-title">Product Details</h3>
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowProductDetailModal(false)}
+          >
+            <span>&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>Product ID: {selectedProduct.id}</p>
+          <p>Product UUID: {selectedProduct.productuuid}</p>
+          <p>Product Name: {selectedProduct.name}</p>
+          <p>Product Description: {selectedProduct.description}</p>
+          <p>Product Price: {selectedProduct.price}</p>
+          <p>Product Quantity: {selectedProduct.quantity}</p>
+          <p>Vendor ID: {selectedProduct.vendor.id}</p>
+          <p>Vendor UUID: {selectedProduct.vendor.vendoruuid}</p>
+          <p>Vendor Name: {selectedProduct.vendor.name}</p>
+          <p>Vendor Address: {selectedProduct.vendor.address}</p>
+          <p>Vendor Phone Number: {selectedProduct.vendor.phoneNumber}</p>
+          <p>Vendor Owner ID: {selectedProduct.vendor.owner.id}</p>
+          <p>Vendor Owner Username: {selectedProduct.vendor.owner.username}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+          {/* Pagination */}
+          <div className="pagination">
+            <button
+              className="btn btn-secondary"
+              disabled={page === 0}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              Previous
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => handlePageChange(page + 1)}
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+export default Orderpages;
