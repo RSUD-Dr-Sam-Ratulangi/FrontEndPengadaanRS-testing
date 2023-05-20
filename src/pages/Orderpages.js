@@ -21,7 +21,7 @@ const Orderpages = () => {
     return totalAmount;
   };
 
-  
+
 
 
 
@@ -70,7 +70,7 @@ const Orderpages = () => {
   };
 
   const handleDeleteOrderItem = (orderItemId) => {
-
+    
   };
 
   const handleAddProduct = () => {
