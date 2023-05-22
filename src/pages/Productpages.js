@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Card, Badge, Modal, Button } from "react-bootstrap";
 import "../assets/productpages.css";
@@ -15,7 +15,7 @@ const Productpages = () => {
 
   const handleConfirmationClose = () => setShowConfirmation(false);
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     axios
       .get(`http://rsudsamrat.site:8080/pengadaan/dev/v1/products/${page}/5`)
       .then((response) => {
@@ -29,7 +29,11 @@ const Productpages = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page]); /* Rendering current page */
+  }, [page]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -55,6 +59,7 @@ const Productpages = () => {
         .then((response) => {
           console.log(response.data);
           alert("Add Item Success");
+          fetchData(); // Mengambil ulang data setelah berhasil menambahkan item
         })
         .catch((err) => {
           console.log(err);
@@ -75,6 +80,7 @@ const Productpages = () => {
             .then((response) => {
               console.log(response.data);
               alert("Add Item Success");
+              fetchData(); // Mengambil ulang data setelah berhasil menambahkan item
             })
             .catch((err) => {
               console.log(err);

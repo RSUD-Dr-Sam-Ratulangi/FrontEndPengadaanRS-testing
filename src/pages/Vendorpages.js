@@ -8,6 +8,7 @@ const Vendorpages = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false); // State for confirmation modal
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
@@ -18,6 +19,14 @@ const Vendorpages = () => {
   });
 
   useEffect(() => {
+    fetchData(); // Fetch initial data
+  }, []);
+
+  useEffect(() => {
+    fetchData(); // Fetch data whenever new product is created
+  }, [showConfirmModal]);
+
+  const fetchData = () => {
     axios
       .get("http://rsudsamrat.site:8080/pengadaan/dev/v1//product-requests")
       .then((response) => {
@@ -27,7 +36,7 @@ const Vendorpages = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  };
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -51,13 +60,15 @@ const Vendorpages = () => {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Defining totalPages
+
   // Change page
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  // const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   // Modal
   const handleCloseModal = () => {
@@ -66,6 +77,10 @@ const Vendorpages = () => {
 
   const handleShowModal = () => {
     setShowModal(true);
+  };
+
+  const handleCloseConfirmModal = () => {
+    setShowConfirmModal(false);
   };
 
   const handleChangeNewProduct = (event) => {
@@ -78,7 +93,10 @@ const Vendorpages = () => {
 
   const handleSubmitNewProduct = (event) => {
     event.preventDefault();
+    setShowConfirmModal(true); // Show confirmation modal when submitting the form
+  };
   
+  const handleConfirmCreate = () => {
     // Perform API call to create the new product request
     axios
       .post("http://rsudsamrat.site:8080/pengadaan/dev/v1//product-requests", newProduct)
@@ -94,6 +112,7 @@ const Vendorpages = () => {
           status: ""
         });
         setShowModal(false);
+        setShowConfirmModal(false);
       })
       .catch((error) => {
         console.log("Error creating new product request:", error);
@@ -193,8 +212,21 @@ const Vendorpages = () => {
     </Form>
   </Modal.Body>
 </Modal>
+  {/* Confirmation Modal */}
+  <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
+    <Modal.Header closeButton>
+      <Modal.Title>Confirm Create Request Product</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <p>Are you sure you want to create this product request?</p>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={handleCloseConfirmModal}>Cancel</Button>
+      <Button variant="primary" onClick={handleConfirmCreate}>Create</Button>
+    </Modal.Footer>
+  </Modal>
+</Container>
 
-    </Container>
   );
 };
 
