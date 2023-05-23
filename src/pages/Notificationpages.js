@@ -49,4 +49,5 @@ class NotificationPages extends React.Component {
   }
 }
 
+
 export default NotificationPages;
