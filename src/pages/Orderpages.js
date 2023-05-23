@@ -29,7 +29,7 @@ const Orderpages = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:8080/pengadaan/dev/v1/orders/orders/items/product-stock?page=${page}&sort=${sort}`
+          `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/orders/items/product-stock?page=${page}&sort=${sort}`
         );
         setData(response.data.content);
         setLoading(false);
@@ -52,7 +52,7 @@ const Orderpages = () => {
   const openModal = async (orderId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/pengadaan/dev/v1/orders/${orderId}`
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${orderId}`
       );
       setSelectedOrder(response.data);
     } catch (error) {
@@ -73,7 +73,7 @@ const Orderpages = () => {
   const handleDetailProduct = async (productUuid) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/pengadaan/dev/v1/products/${productUuid}`
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/products/${productUuid}`
       );
       setSelectedProduct(response.data);
       setShowProductDetailModal(true);
@@ -85,7 +85,7 @@ const Orderpages = () => {
   const handlePayoutDetail = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/pengadaan/dev/v1/orders/${selectedOrder.id}`
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${selectedOrder.id}`
       );
       setPayoutDetails(response.data);
     } catch (error) {
@@ -117,7 +117,7 @@ const Orderpages = () => {
     // Make the API call to update the order item
     axios
       .put(
-        `http://localhost:8080/pengadaan/dev/v1/orders/${selectedOrder.id}/items`,
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${selectedOrder.id}/items`,
         payload
       )
       .then((response) => {
@@ -143,7 +143,7 @@ const Orderpages = () => {
     try {
       // PUT request to update payment using Axios
       const response = await axios.put(
-        `http://localhost:8080/pengadaan/dev/v1/orders/${selectedOrder.id}/${selectedOrderItem.id}/payment`
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${selectedOrder.id}/${selectedOrderItem.id}/payment`
       );
   
       // Handle the response as needed
