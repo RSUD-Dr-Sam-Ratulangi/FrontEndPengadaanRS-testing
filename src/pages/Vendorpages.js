@@ -1,153 +1,233 @@
-import React, { useState, useEffect } from 'react';
-import '../assets/vendorpages.css';
-import { Container } from 'react-bootstrap';
-import axios from 'axios';
-import Vendorreqtable from './Vendorreqtable';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Container, Table, Pagination, Button, Modal, Form } from 'react-bootstrap';
 
 const Vendorpages = () => {
-  const [formValues, setFormValues] = useState({
-    name: '',
-    description: '',
-    price: '',
-    quantity: '',
-    imageUrl: '',
-    status: '',
+  const [productList, setProductList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(10);
+  const [showModal, setShowModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false); // State for confirmation modal
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    description: "",
+    price: "",
+    quantity: "",
+    imageUrl: "",
+    status: ""
   });
 
-  const [productList, setProductList] = useState([]);
-
   useEffect(() => {
-    // Fetch product list
-    fetchProductList();
+    fetchData(); // Fetch initial data
   }, []);
 
-  const fetchProductList = async () => {
-    try {
-      const response = await axios.get('http://rsudsamrat.site:8080/pengadaan/dev/v1/product-requests');
-      setProductList(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+  useEffect(() => {
+    fetchData(); // Fetch data whenever new product is created
+  }, [showConfirmModal]);
+
+  const fetchData = () => {
+    axios
+      .get("http://rsudsamrat.site:8080/pengadaan/dev/v1//product-requests")
+      .then((response) => {
+        setProductList(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://rsudsamrat.site:8080/pengadaan/dev/v1/product-requests', formValues);
-      console.log(response.data);
-      // Refresh product list
-      fetchProductList();
-    } catch (error) {
-      console.error(error);
-    }
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset current page to 1 when search term changes
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
+  const filteredProducts = productList.filter((product) => {
+    const search = searchTerm.toLowerCase();
+    return (
+      product.name.toLowerCase().includes(search) ||
+      product.description.toLowerCase().includes(search) ||
+      product.price.toString().toLowerCase().includes(search) ||
+      product.quantity.toString().toLowerCase().includes(search) ||
+      product.imageUrl.toLowerCase().includes(search) ||
+      product.status.toLowerCase().includes(search)
+    );
+  });
+
+  // Get current products
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Defining totalPages
+
+  // Change page
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
+
+  // Calculate total pages
+  // const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // Modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseConfirmModal = () => {
+    setShowConfirmModal(false);
+  };
+
+  const handleChangeNewProduct = (event) => {
+    const { name, value } = event.target;
+    setNewProduct((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmitNewProduct = (event) => {
+    event.preventDefault();
+    setShowConfirmModal(true); // Show confirmation modal when submitting the form
+  };
+  
+  const handleConfirmCreate = () => {
+    // Perform API call to create the new product request
+    axios
+      .post("http://rsudsamrat.site:8080/pengadaan/dev/v1//product-requests", newProduct)
+      .then((response) => {
+        console.log("New product request created:", response.data);
+        // Reset the form and close the modal
+        setNewProduct({
+          name: "",
+          description: "",
+          price: "",
+          quantity: "",
+          imageUrl: "",
+          status: ""
+        });
+        setShowModal(false);
+        setShowConfirmModal(false);
+      })
+      .catch((error) => {
+        console.log("Error creating new product request:", error);
+      });
+  };  
 
   return (
     <Container>
-      <div className="row">
-        <div className="col-md-6">
-          <h2>Product List</h2>
-          <Vendorreqtable productList={productList} />
-        </div>
-        <div className="col-md-6">
-          <h2>Create Product Request</h2>
-          <form onSubmit={handleSubmit} className="vendor-pages-form">
-            <div className="form-group">
-              <p>Vendor</p>
-              <label htmlFor="name">Name:</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formValues.name}
-                onChange={handleChange}
-                required
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="description">Description:</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formValues.description}
-                onChange={handleChange}
-                required
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="price">Price:</label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={formValues.price}
-                onChange={handleChange}
-                required
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="quantity">Quantity:</label>
-              <input
-                type="number"
-                id="quantity"
-                name="quantity"
-                value={formValues.quantity}
-                onChange={handleChange}
-                required
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="imageUrl">Image URL:</label>
-              <input
-                type="url"
-                id="imageUrl"
-                name="imageUrl"
-                value={formValues.imageUrl}
-                onChange={handleChange}
-                required
-                className="form-control"
-              />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="status">Status:</label>
-            <select
-              id="status"
-              name="status"
-              value={formValues.status}
-              onChange={handleChange}
-              required
-              className="form-control"
-            >
-              <option value="">Select Status</option>
-              <option value="OPEN">OPEN</option>
-              <option value="CLOSED">CLOSED</option>
-              <option value="FULFILLED">FULFILLED</option>
-            </select>
-          </div>
-
-          <button type="submit" className="btn btn-primary">
-            Create Product Request
-          </button>
-        </form>
+      <h2>Request Product List</h2>
+      <Button variant="primary" onClick={handleShowModal}>Add</Button>
+      <div className="my-4">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by Name, Description, Price, Quantity, Image URL, or Status"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
       </div>
-    </div>
-  </Container>
-);
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Image URL</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+        <tbody>
+          {currentProducts.map((product) => (
+            <tr key={product.id}>
+              <td>{product.name}</td>
+              <td>{product.description}</td>
+              <td>{product.price}</td>
+              <td>{product.quantity}</td>
+              <td>
+                <img src={product.imageUrl} alt={product.name} style={{ width: '100px' }} />
+              </td>
+              <td>{product.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+      <Pagination>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Pagination.Item
+            key={index + 1}
+            active={index + 1 === currentPage}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
 
+
+
+      <Modal show={showModal} onHide={handleCloseModal}>
+  <Modal.Header closeButton>
+    <Modal.Title>Create Request Product</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form onSubmit={handleSubmitNewProduct}>
+      <Form.Group controlId="name">
+        <Form.Label>Name</Form.Label>
+        <Form.Control type="text" name="name" value={newProduct.name} onChange={handleChangeNewProduct} />
+      </Form.Group>
+      <Form.Group controlId="description">
+        <Form.Label>Description</Form.Label>
+        <Form.Control type="text" name="description" value={newProduct.description} onChange={handleChangeNewProduct} />
+      </Form.Group>
+      <Form.Group controlId="price">
+  <Form.Label>Price</Form.Label>
+  <Form.Control type="number" name="price" value={newProduct.price} onChange={handleChangeNewProduct} required />
+</Form.Group>
+<Form.Group controlId="quantity">
+  <Form.Label>Quantity</Form.Label>
+  <Form.Control type="number" name="quantity" value={newProduct.quantity} onChange={handleChangeNewProduct} required />
+</Form.Group>
+
+      <Form.Group controlId="imageUrl">
+        <Form.Label>Image URL</Form.Label>
+        <Form.Control type="text" name="imageUrl" value={newProduct.imageUrl} onChange={handleChangeNewProduct} />
+      </Form.Group>
+      <Form.Group controlId="status">
+        <Form.Label>Status</Form.Label>
+        <Form.Control as="select" name="status" value={newProduct.status} onChange={handleChangeNewProduct}>
+          <option value="">Select Status</option>
+          <option value="OPEN">OPEN</option>
+          <option value="CLOSED">CLOSED</option>
+          <option value="FULFILLED">FULFILLED</option>
+        </Form.Control>
+      </Form.Group>
+      <Button variant="primary" type="submit">Create</Button>
+    </Form>
+  </Modal.Body>
+</Modal>
+  {/* Confirmation Modal */}
+  <Modal show={showConfirmModal} onHide={handleCloseConfirmModal}>
+    <Modal.Header closeButton>
+      <Modal.Title>Confirm Create Request Product</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <p>Are you sure you want to create this product request?</p>
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={handleCloseConfirmModal}>Cancel</Button>
+      <Button variant="primary" onClick={handleConfirmCreate}>Create</Button>
+    </Modal.Footer>
+  </Modal>
+</Container>
+
+  );
 };
 
 export default Vendorpages;

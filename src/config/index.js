@@ -6,7 +6,7 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Vendorpages from '../pages/Vendorpages';
-import Vendorreqtable from '../pages/Vendorreqtable';
+// import Vendorreqtable from '../pages/Vendorreqtable';
 import Orderpages from '../pages/Orderpages';
 import Notificationpages from '../pages/Notificationpages';
 import Profilpages from '../pages/Profilpages';
@@ -20,7 +20,7 @@ const Routers = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/products" element={<Productpages />} />
         <Route path="/vendor" element={<Vendorpages />} /> {/* Update the route path to "/vendor" */}
-        <Route path="/vendorlist" element={<Vendorreqtable />} />
+        {/* <Route path="/vendorlist" element={<Vendorreqtable />} /> */}
         <Route path="/orders" element={<Orderpages />} />
         <Route path="/notifications" element={<Notificationpages />} />
         <Route path="/profile" element={<Profilpages />} />
