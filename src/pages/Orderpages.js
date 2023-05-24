@@ -102,23 +102,23 @@ const Orderpages = () => {
   };
 
   const handleOfferSubmit = () => {
-    // Prepare the request payload
-    const payload = {
-      orderId: selectedOrder.id, // Get the orderId from the selected order
-      orderItems: [
-        {
-          orderItemId: selectedOrderItem.id,
-          status: "OFFER",
-          bidPrice: parseFloat(bidPrice),
-        },
-      ],
-    };
-
+    // // Prepare the request payload
+    // const payload = {
+    //   orderId: selectedOrder.id, // Get the orderId from the selected order
+    //   orderItems: [
+    //     {
+    //       orderItemId: selectedOrderItem.id,
+    //       status: "OFFER",
+    //       bidPrice: parseFloat(bidPrice),
+    //     },
+    //   ],
+    // };
+    const status = "OFFER";
     // Make the API call to update the order item
     axios
       .put(
-        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${selectedOrder.id}/items`,
-        payload
+        `http://rsudsamrat.site:8080/pengadaan/dev/v1/orders/${selectedOrder.id}/items/${selectedOrderItem.id}`,
+        {orderItemId: selectedOrderItem.id, bidPrice: parseFloat(bidPrice), status: status}
       )
       .then((response) => {
         // Handle the response
