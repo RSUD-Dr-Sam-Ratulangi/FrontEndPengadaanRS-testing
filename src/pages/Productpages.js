@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, Badge, Modal, Button } from "react-bootstrap";
 import "../assets/productpages.css";
@@ -15,7 +15,7 @@ const Productpages = () => {
 
   const handleConfirmationClose = () => setShowConfirmation(false);
 
-  const fetchData = useCallback(() => {
+  useEffect(() => {
     axios
       .get(`http://rsudsamrat.site:8080/pengadaan/dev/v1/products/${page}/5`)
       .then((response) => {
@@ -29,20 +29,16 @@ const Productpages = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [page]);
+  }, [page]); /* Rendering current page */
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+const handleSearch = (event) => {
+  setSearchTerm(event.target.value);
+};
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const showOrderConfirmation = (product) => {
-    setSelectedProduct(product);
-    setShowConfirmation(true);
-  };
+const showOrderConfirmation = (product) => {
+  setSelectedProduct(product);
+  setShowConfirmation(true);
+};
 
   const handleOrderConfirmation = () => {
     setShowConfirmation(false);
@@ -59,7 +55,6 @@ const Productpages = () => {
         .then((response) => {
           console.log(response.data);
           alert("Add Item Success");
-          fetchData(); // Mengambil ulang data setelah berhasil menambahkan item
         })
         .catch((err) => {
           console.log(err);
@@ -80,7 +75,6 @@ const Productpages = () => {
             .then((response) => {
               console.log(response.data);
               alert("Add Item Success");
-              fetchData(); // Mengambil ulang data setelah berhasil menambahkan item
             })
             .catch((err) => {
               console.log(err);
@@ -94,17 +88,17 @@ const Productpages = () => {
 
   
 
-  const prevPage = () => {
-    if (page > 0) {
-      setPage(page - 1);
-    }
-  };
+const prevPage = () => {
+  if (page > 0) {
+    setPage(page - 1);
+  }
+};
 
-  const nextPage = () => {
-    if (page < totalPages - 1) {
-      setPage(page + 1);
-    }
-  };
+const nextPage = () => {
+  if (page < totalPages - 1) {
+    setPage(page + 1);
+  }
+};
 
 
   const filteredProducts = products.filter((product) => {
@@ -135,8 +129,8 @@ const Productpages = () => {
         {filteredProducts.map((product) => (
           <div className="col mb-4" key={product.id}>
             <Card className="h-100">
-              <Card.Img variant="top" src={product.imageUrl} />
-              {/* <Card.Img variant="top" /> */}
+              {/* <Card.Img variant="top" src={product.imageUrl} /> */}
+              <Card.Img variant="top" />
               <Card.Body>
                 <p>{product.vendor.name}</p> {/* Menampilkan nama vendor */}
                 <Card.Title>{product.name}</Card.Title>
