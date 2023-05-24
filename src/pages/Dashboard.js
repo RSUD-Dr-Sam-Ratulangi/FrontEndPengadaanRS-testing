@@ -1,4 +1,5 @@
 import React from "react";
+// import { Link } from 'react-router-dom';
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import dashboardImage from "../assets/statistik.JPG";
@@ -8,7 +9,6 @@ import { useSelector } from "react-redux";
 const Dashboard = () => {
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn); // Ambil nilai isLoggedIn dari state Redux
   const username = useSelector((state) => state.auth.user?.username);
-  
   return (
     <div className="dashboard">
       <Navigation />

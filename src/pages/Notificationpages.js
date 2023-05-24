@@ -41,4 +41,5 @@ const NotificationPages = () => {
   );
 };
 
+
 export default NotificationPages;
