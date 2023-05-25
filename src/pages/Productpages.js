@@ -3,6 +3,7 @@ import axios from "axios";
 import { Card, Badge, Modal, Button } from "react-bootstrap";
 import "../assets/productpages.css";
 
+
 const Productpages = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0);
@@ -129,8 +130,8 @@ const nextPage = () => {
         {filteredProducts.map((product) => (
           <div className="col mb-4" key={product.id}>
             <Card className="h-100">
-              {/* <Card.Img variant="top" src={product.imageUrl} /> */}
-              <Card.Img variant="top" />
+              <Card.Img variant="top" src={product.imageUrl} />
+              {/* <Card.Img variant="top" /> */}
               <Card.Body>
                 <p>{product.vendor.name}</p> {/* Menampilkan nama vendor */}
                 <Card.Title>{product.name}</Card.Title>

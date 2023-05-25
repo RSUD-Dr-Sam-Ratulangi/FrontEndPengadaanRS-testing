@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
+import "../assets/vendorpages.css";
 
 const Orderpages = () => {
   const [data, setData] = useState([]);
@@ -14,6 +16,7 @@ const Orderpages = () => {
   const [selectedOrderItem, setSelectedOrderItem] = useState(null);
   const [bidPrice, setBidPrice] = useState("");
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const calculatePayoutAmount = (orderItems) => {
     let totalAmount = 0;
@@ -68,7 +71,9 @@ const Orderpages = () => {
 
   const handleDeleteOrderItem = (orderItemId) => { };
 
-  const handleAddProduct = () => { };
+  const handleAddProduct = () => { 
+    navigate('/products');
+  };
 
   const handleDetailProduct = async (productUuid) => {
     try {
@@ -232,7 +237,7 @@ const Orderpages = () => {
           </table>
 
           {selectedOrder && (
-            <div className="modal" style={{ display: "block" }}>
+            <div className="modal modal-background" style={{ display: "block" }}>
               <div className="modal-dialog modal-dialog-centered modal-xl">
                 <div className="modal-content">
                   <div className="modal-header">
@@ -252,6 +257,7 @@ const Orderpages = () => {
                         <tr>
                           <th>OrderId</th>
                           <th>Product UUID</th>
+                          <th>Vendor Name</th>
                           <th>Product Name</th>
                           <th>Product Price</th>
                           <th>bidprice</th>
@@ -265,6 +271,7 @@ const Orderpages = () => {
                           <tr key={orderItem.id}>
                             <td>{orderItem.id}</td>
                             <td>{orderItem.product.productuuid}</td>
+                            <td>{orderItem.product.vendor.name}</td>
                             <td>{orderItem.product.name}</td>
                             <td>{orderItem.product.price}</td>
                             <td>{orderItem.bidPrice}</td>
@@ -304,7 +311,7 @@ const Orderpages = () => {
                                 Delete
                               </button>
                               <button
-                                className="btn btn-sm btn-primary"
+                                className="btn btn-sm btn-info"
                                 onClick={() =>
                                   handleDetailProduct(
                                     orderItem.product.productuuid
@@ -315,7 +322,7 @@ const Orderpages = () => {
                               </button>
                               <td>
                                 <button
-                                  className="btn btn-sm btn-primary"
+                                  className="btn btn-sm btn-warning"
                                   onClick={() => handleOffer(orderItem.id)}
                                 >
                                   Offer
@@ -324,7 +331,7 @@ const Orderpages = () => {
                               <td>
                                 {orderItem.status === "ACCEPTED" && (
                                   <button
-                                    className="btn btn-sm btn-primary"
+                                    className="btn btn-sm btn-success"
                                     onClick={() =>
                                       handleOpenSubmitModal(orderItem)
                                     }
@@ -350,12 +357,12 @@ const Orderpages = () => {
                   <div className="modal-footer">
                     <button
                       type="button"
-                      className="btn btn-primary"
+                      className="btn btn-secondary"
                       onClick={handlePayoutDetail}
                     >
                       Payout Detail
                     </button>
-                    <button type="button" className="btn btn-primary">
+                    <button type="button" className="btn btn-secondary">
                       Check Status
                     </button>
                   </div>
@@ -365,7 +372,7 @@ const Orderpages = () => {
           )}
 
           {showProductDetailModal && selectedProduct && (
-            <div className="modal" style={{ display: "block" }}>
+            <div className="modal modal-background" style={{ display: "block" }}>
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">
@@ -404,7 +411,7 @@ const Orderpages = () => {
           )}
 
           {payoutDetails && (
-            <div className="modal" style={{ display: "block" }}>
+            <div className="modal modal-background" style={{ display: "block" }}>
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">
@@ -466,7 +473,7 @@ const Orderpages = () => {
           )}
 
           {showOfferModal && selectedOrderItem && (
-            <div className="modal" style={{ display: "block" }}>
+            <div className="modal modal-background" style={{ display: "block" }}>
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">
@@ -507,9 +514,10 @@ const Orderpages = () => {
 
           {selectedOrderItem && (
             <div
-              className="modal"
+              className="modal modal-background"
               style={{ display: submitModalOpen ? "block" : "none" }}
             >
+            
               <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                   <div className="modal-header">
@@ -531,21 +539,21 @@ const Orderpages = () => {
                   <div className="modal-footer">
                     <button
                       type="button"
-                      className="btn btn-primary"
+                      className="btn btn-success"
                       onClick={handleSubmitOrderItem}
                     >
                       Submit
                     </button>
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="btn btn-danger"
                       onClick={handleCloseSubmitModal}
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
-                      className="btn btn-secondary"
+                      className="btn btn-info"
                       onClick={handlePrintOrderItem}
                     >
                       Print

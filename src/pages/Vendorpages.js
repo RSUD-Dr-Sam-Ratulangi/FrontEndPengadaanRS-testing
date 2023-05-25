@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Table, Pagination, Button, Modal, Form } from 'react-bootstrap';
+import "../assets/vendorpages.css";
 
 const Vendorpages = () => {
   const [productList, setProductList] = useState([]);
@@ -172,7 +173,7 @@ const Vendorpages = () => {
 
 
 
-      <Modal show={showModal} onHide={handleCloseModal}>
+      <Modal show={showModal} onHide={handleCloseModal} className="modal-background">
   <Modal.Header closeButton>
     <Modal.Title>Create Request Product</Modal.Title>
   </Modal.Header>
